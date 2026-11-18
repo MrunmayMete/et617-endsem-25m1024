@@ -1,0 +1,327 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "Profile",
+      "description": "Authenticated user display profile and UI preferences (PII stored separately).",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "role": { "type": "string", "enum": ["student", "teacher"] },
+        "preferredMode": { "type": "string", "enum": ["student", "teacher"] },
+        "language": { "type": "string", "enum": ["mr", "en"] },
+        "activeClassroomId": { "type": "string", "maxLength": 128 },
+        "activeClassroomCode": { "type": "string", "maxLength": 20 },
+        "activeRollNumber": { "type": "string", "maxLength": 32 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fullName", "role", "preferredMode", "language", "createdAt", "updatedAt"]
+    },
+    "PrivateUserInfo": {
+      "title": "PrivateUserInfo",
+      "description": "Isolated user PII (email address) accessible strictly to the owning user.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "createdAt", "updatedAt"]
+    },
+    "ClassroomCodeLookup": {
+      "title": "ClassroomCodeLookup",
+      "description": "Unique classroom code index mapping uppercase code to classroom ID.",
+      "type": "object",
+      "properties": {
+        "classroomId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "classroomCode": { "type": "string", "minLength": 2, "maxLength": 20, "pattern": "^[A-Z0-9_\\-]+$" },
+        "teacherId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["classroomId", "classroomCode", "teacherId", "createdAt"]
+    },
+    "Classroom": {
+      "title": "Classroom",
+      "description": "Classroom community created and facilitated by a teacher.",
+      "type": "object",
+      "properties": {
+        "classroomCode": { "type": "string", "minLength": 2, "maxLength": 20, "pattern": "^[A-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 500 },
+        "teacherId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "teacherName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "deadline": { "type": "string", "maxLength": 40 },
+        "status": { "type": "string", "enum": ["drafting", "active", "closed"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["classroomCode", "name", "teacherId", "teacherName", "status", "createdAt", "updatedAt"]
+    },
+    "AuthorisedRollNumber": {
+      "title": "AuthorisedRollNumber",
+      "description": "Teacher-authorised roll number that can be claimed once by an enrolled student.",
+      "type": "object",
+      "properties": {
+        "classroomId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "teacherId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "rollNumber": { "type": "string", "minLength": 2, "maxLength": 32, "pattern": "^[A-Z0-9_\\-]+$" },
+        "claimedBy": { "type": "string", "maxLength": 128 },
+        "claimedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["classroomId", "teacherId", "rollNumber", "createdAt"]
+    },
+    "Enrollment": {
+      "title": "Enrollment",
+      "description": "Verified student membership in a classroom tied to a single roll number.",
+      "type": "object",
+      "properties": {
+        "classroomId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "teacherId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "studentId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "studentName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "rollNumber": { "type": "string", "minLength": 2, "maxLength": 32, "pattern": "^[A-Z0-9_\\-]+$" },
+        "status": { "type": "string", "enum": ["active", "removed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["classroomId", "teacherId", "studentId", "studentName", "rollNumber", "status", "createdAt"]
+    },
+    "ConstitutionalItem": {
+      "title": "ConstitutionalItem",
+      "description": "Approved classroom constitutional provision (Right, Duty, or Article).",
+      "type": "object",
+      "properties": {
+        "classroomId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "teacherId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "category": { "type": "string", "enum": ["right", "duty", "article"] },
+        "articleNumber": { "type": "integer" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "content": { "type": "string", "minLength": 5, "maxLength": 2000 },
+        "version": { "type": "integer" },
+        "status": { "type": "string", "enum": ["active", "archived"] },
+        "originalProposalId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "classroomId",
+        "teacherId",
+        "category",
+        "articleNumber",
+        "title",
+        "content",
+        "version",
+        "status",
+        "originalProposalId",
+        "authorId",
+        "authorName",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ConstitutionalItemVersion": {
+      "title": "ConstitutionalItemVersion",
+      "description": "Immutable historical version snapshot preserved across constitutional amendments.",
+      "type": "object",
+      "properties": {
+        "constitutionalItemId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "classroomId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "teacherId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "versionNumber": { "type": "integer" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "content": { "type": "string", "minLength": 5, "maxLength": 2000 },
+        "amendmentProposalId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "approvedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "constitutionalItemId",
+        "classroomId",
+        "teacherId",
+        "versionNumber",
+        "title",
+        "content",
+        "amendmentProposalId",
+        "approvedBy",
+        "createdAt"
+      ]
+    },
+    "Proposal": {
+      "title": "Proposal",
+      "description": "Student proposal for a Right, Duty, Article, Amendment, or CIL case.",
+      "type": "object",
+      "properties": {
+        "classroomId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "teacherId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "authorRole": { "type": "string", "enum": ["student", "teacher"] },
+        "type": { "type": "string", "enum": ["right", "duty", "article", "amendment", "cil"] },
+        "targetItemId": { "type": "string", "maxLength": 128 },
+        "challengedPractice": { "type": "string", "maxLength": 1000 },
+        "suggestedSolution": { "type": "string", "maxLength": 1000 },
+        "title": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "proposedContent": { "type": "string", "minLength": 5, "maxLength": 2000 },
+        "currentContent": { "type": "string", "maxLength": 2000 },
+        "rationale": { "type": "string", "minLength": 3, "maxLength": 1500 },
+        "status": {
+          "type": "string",
+          "enum": [
+            "discussion",
+            "voting",
+            "pending_teacher_review",
+            "approved",
+            "rejected",
+            "reconsideration",
+            "vetoed",
+            "not_passed"
+          ]
+        },
+        "votingRound": { "type": "integer" },
+        "approveCount": { "type": "integer" },
+        "rejectCount": { "type": "integer" },
+        "likesCount": { "type": "integer" },
+        "dislikesCount": { "type": "integer" },
+        "commentsCount": { "type": "integer" },
+        "teacherReason": { "type": "string", "maxLength": 1000 },
+        "teacherDecision": { "type": "string", "enum": ["approved", "rejected", "reconsideration", "vetoed"] },
+        "decidedBy": { "type": "string", "maxLength": 128 },
+        "decidedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "classroomId",
+        "teacherId",
+        "authorId",
+        "authorName",
+        "authorRole",
+        "type",
+        "title",
+        "proposedContent",
+        "rationale",
+        "status",
+        "votingRound",
+        "approveCount",
+        "rejectCount",
+        "likesCount",
+        "dislikesCount",
+        "commentsCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Reaction": {
+      "title": "Reaction",
+      "description": "Informal like or dislike reaction from an enrolled student (never counted as formal vote).",
+      "type": "object",
+      "properties": {
+        "proposalId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "studentId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "reactionType": { "type": "string", "enum": ["like", "dislike"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["proposalId", "studentId", "reactionType", "createdAt", "updatedAt"]
+    },
+    "FormalVote": {
+      "title": "FormalVote",
+      "description": "Official democratic vote cast by an enrolled student (one per round).",
+      "type": "object",
+      "properties": {
+        "proposalId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "studentId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "voteType": { "type": "string", "enum": ["formal"] },
+        "choice": { "type": "string", "enum": ["approve", "reject"] },
+        "votingRound": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["proposalId", "studentId", "voteType", "choice", "votingRound", "createdAt"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Discussion comment or reply on a proposal.",
+      "type": "object",
+      "properties": {
+        "proposalId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "authorRole": { "type": "string", "enum": ["student", "teacher"] },
+        "content": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "parentId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["proposalId", "authorId", "authorName", "authorRole", "content", "createdAt", "updatedAt"]
+    },
+    "ParticipationLog": {
+      "title": "ParticipationLog",
+      "description": "Simple participation history log for classroom engagement summary.",
+      "type": "object",
+      "properties": {
+        "classroomId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "studentId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "activityType": { "type": "string", "minLength": 2, "maxLength": 40 },
+        "relatedProposalId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["classroomId", "studentId", "activityType", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": { "$ref": "#/entities/Profile" },
+      "description": "User display profiles and active classroom reference."
+    },
+    "/profiles/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/PrivateUserInfo" },
+      "description": "Isolated PII (email) readable only by the user."
+    },
+    "/classroomCodes/{code}": {
+      "schema": { "$ref": "#/entities/ClassroomCodeLookup" },
+      "description": "Unique classroom code registry."
+    },
+    "/classrooms/{classroomId}": {
+      "schema": { "$ref": "#/entities/Classroom" },
+      "description": "Classroom metadata and drafting lifecycle."
+    },
+    "/classrooms/{classroomId}/rollNumbers/{rollNumber}": {
+      "schema": { "$ref": "#/entities/AuthorisedRollNumber" },
+      "description": "Teacher-authorised roll numbers for enrollment."
+    },
+    "/classrooms/{classroomId}/enrollments/{studentId}": {
+      "schema": { "$ref": "#/entities/Enrollment" },
+      "description": "Enrolled classroom students."
+    },
+    "/classrooms/{classroomId}/constitutionalItems/{itemId}": {
+      "schema": { "$ref": "#/entities/ConstitutionalItem" },
+      "description": "Approved classroom constitutional provisions."
+    },
+    "/classrooms/{classroomId}/constitutionalItems/{itemId}/versions/{versionId}": {
+      "schema": { "$ref": "#/entities/ConstitutionalItemVersion" },
+      "description": "Preserved historical versions of constitutional provisions."
+    },
+    "/classrooms/{classroomId}/proposals/{proposalId}": {
+      "schema": { "$ref": "#/entities/Proposal" },
+      "description": "Classroom proposals, amendments, and CIL submissions."
+    },
+    "/classrooms/{classroomId}/proposals/{proposalId}/reactions/{studentId}": {
+      "schema": { "$ref": "#/entities/Reaction" },
+      "description": "Informal student likes and dislikes."
+    },
+    "/classrooms/{classroomId}/proposals/{proposalId}/votes/{voteId}": {
+      "schema": { "$ref": "#/entities/FormalVote" },
+      "description": "Official student votes (one per round)."
+    },
+    "/classrooms/{classroomId}/proposals/{proposalId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Threaded proposal comments and replies."
+    },
+    "/classrooms/{classroomId}/participationLogs/{logId}": {
+      "schema": { "$ref": "#/entities/ParticipationLog" },
+      "description": "Classroom participation events."
+    }
+  }
+}
