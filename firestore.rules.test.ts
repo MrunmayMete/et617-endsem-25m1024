@@ -1,0 +1,103 @@
+/**
+ * Security Rules Verification Suite (Reference Test Cases for @firebase/rules-unit-testing)
+ * Mirrors the "Dirty Dozen" adversarial payloads defined in security_spec.md.
+ */
+
+export const DIRTY_DOZEN_SECURITY_CASES = [
+  {
+    id: 'DD-01',
+    name: 'Role Escalation on Profile Create',
+    path: 'profiles/attackerUid',
+    operation: 'create',
+    payload: { fullName: 'Attacker', role: 'teacher', preferredMode: 'teacher', language: 'mr' },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-02',
+    name: 'Profile PII Read by Another User',
+    path: 'profiles/victimUid/private/info',
+    operation: 'get',
+    payload: null,
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-03',
+    name: 'Shadow Field Injection on Proposal Create',
+    path: 'classrooms/class1/proposals/prop1',
+    operation: 'create',
+    payload: { title: 'Test', status: 'approved', isApproved: true },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-04',
+    name: 'Unenrolled User Creating Proposal',
+    path: 'classrooms/class1/proposals/prop2',
+    operation: 'create',
+    payload: { title: 'Test Right', type: 'right', status: 'discussion' },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-05',
+    name: 'Student Approving Own Proposal',
+    path: 'classrooms/class1/proposals/prop1',
+    operation: 'update',
+    payload: { status: 'approved', teacherDecision: 'approved' },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-06',
+    name: 'Double Voting in Same Round',
+    path: 'classrooms/class1/proposals/prop1/votes/1_studentUid',
+    operation: 'create',
+    payload: { proposalId: 'prop1', studentId: 'studentUid', voteType: 'formal', choice: 'approve', votingRound: 1 },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-07',
+    name: 'Voting Outside Active Voting Window',
+    path: 'classrooms/class1/proposals/propDiscussion/votes/0_studentUid',
+    operation: 'create',
+    payload: { proposalId: 'propDiscussion', studentId: 'studentUid', voteType: 'formal', choice: 'approve', votingRound: 0 },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-08',
+    name: 'Teacher Voting as Student',
+    path: 'classrooms/class1/proposals/prop1/votes/1_teacherUid',
+    operation: 'create',
+    payload: { proposalId: 'prop1', studentId: 'teacherUid', voteType: 'formal', choice: 'approve', votingRound: 1 },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-09',
+    name: 'Teacher Rejecting Without Explanation',
+    path: 'classrooms/class1/proposals/propReview',
+    operation: 'update',
+    payload: { status: 'rejected', teacherDecision: 'rejected', teacherReason: '' },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-10',
+    name: 'Claiming Already-Claimed Roll Number',
+    path: 'classrooms/class1/rollNumbers/ET01001',
+    operation: 'update',
+    payload: { claimedBy: 'secondStudentUid' },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-11',
+    name: 'Student Direct Mutation of Approved Constitution',
+    path: 'classrooms/class1/constitutionalItems/item1',
+    operation: 'update',
+    payload: { content: 'Tampered rule content' },
+    expected: 'PERMISSION_DENIED',
+  },
+  {
+    id: 'DD-12',
+    name: 'Client-Forged Timestamp or Oversized ID',
+    path: `classrooms/class1/proposals/${'x'.repeat(140)}`,
+    operation: 'create',
+    payload: { createdAt: new Date(0).toISOString() },
+    expected: 'PERMISSION_DENIED',
+  },
+] as const;

@@ -1,0 +1,1343 @@
+# Build a Full-Stack Educational Application: Aapli Varg Sabha (आपली वर्ग सभा)
+
+Act as a senior full-stack developer, UI/UX designer, database architect, and educational technology designer.
+
+Build a functional, responsive, full-stack web application called **Aapli Varg Sabha (आपली वर्ग सभा)**.
+
+Do not create just a static prototype or a collection of disconnected screens. Build a working application with authentication, classroom membership, proposals, discussions, voting, teacher decisions, and a dynamically updated classroom constitution.
+
+---
+
+# 1. PROJECT CONTEXT: WHAT ARE WE BUILDING?
+
+## 1.1 The central idea
+
+Aapli Varg Sabha is a collaborative digital platform where students participate in creating and governing their own classroom constitution.
+
+The central educational idea is to help students understand democracy, collective decision-making, constitutional values, rights, duties, equality, justice, and civic responsibility through practical participation rather than simply reading about these concepts in a textbook.
+
+Treat a classroom as a small democratic community:
+
+- Students are members of the community.
+- The classroom constitution represents its mutually discussed and accepted principles.
+- Students can suggest rules, discuss disagreements, vote on proposals, and challenge existing rules.
+- Teachers act as facilitators and constitutional authorities who review and make decisions on proposals.
+
+The application should provide an environment where students learn democracy by practising it.
+
+## 1.2 How the classroom constitution works
+
+Students collaboratively develop three main types of constitutional provisions:
+
+**A. Rights**
+
+Rights describe what every student should be entitled to within the classroom.
+
+Examples:
+- Every student has the right to express an opinion respectfully.
+- Every student has the right to ask questions without being ridiculed.
+- Every student has the right to equal opportunities to participate.
+
+**B. Duties**
+
+Duties describe the responsibilities students have towards one another and the classroom community.
+
+Examples:
+- Students should respect the opinions of others.
+- Students should keep the classroom clean.
+- Students should allow everyone an opportunity to participate.
+
+**C. Articles**
+
+Articles describe agreed rules, procedures, and principles governing different aspects of classroom life.
+
+Examples:
+- Procedures for selecting a class representative.
+- Rules for sharing classroom resources.
+- Procedures for resolving disagreements.
+
+These are examples to help users understand the categories. Students should be able to create their own provisions.
+
+## 1.3 Democratic decision-making process
+
+The application must follow this process:
+
+1. A student proposes a new right, duty, or article.
+2. The student explains the reasoning behind the proposal.
+3. Other students can express support or disagreement using likes and dislikes.
+4. Students can discuss the proposal through comments and replies.
+5. Formal voting is opened separately.
+6. Students cast an official approve or reject vote.
+7. If the proposal receives majority support, it moves to the teacher for review.
+8. The teacher can approve, reject, request reconsideration, or veto it.
+9. Only teacher-approved provisions become part of the active classroom constitution.
+
+**Important:** Likes and dislikes are informal expressions of opinion. They must never be counted as formal votes.
+
+A proposal receiving majority support does not automatically become part of the constitution. Teacher approval is a separate mandatory stage.
+
+## 1.4 Amendments
+
+A constitution should not be permanent or unchangeable.
+
+Students can propose amendments to existing constitutional provisions when they believe a rule needs improvement.
+
+An amendment must:
+- Reference an existing constitutional provision.
+- Show the current wording.
+- Show the proposed revised wording.
+- Include a rationale explaining why the change is needed.
+- Support discussion and formal voting.
+- Go through teacher review.
+
+When an amendment is approved, update the active provision while preserving its previous version in the database.
+
+## 1.5 Classroom Interest Litigation (CIL)
+
+Classroom Interest Litigation is a mechanism through which students can formally raise concerns or challenge an existing classroom rule, decision, or practice.
+
+For example:
+- A student believes that a classroom rule treats some students unfairly.
+- A group believes that an existing rule should be reconsidered.
+- A student wants to challenge how a classroom responsibility is distributed.
+
+CIL should provide:
+- A title for the concern.
+- A description of the issue.
+- The existing rule or practice being challenged, if applicable.
+- A rationale or explanation.
+- Student discussion.
+- Formal voting.
+- Teacher review and decision.
+
+CIL is a structured educational simulation of questioning rules and seeking fair reconsideration. Do not represent it as an actual legal proceeding.
+
+## 1.6 Educational philosophy
+
+The application should help students:
+
+1. Understand the relationship between individual rights and collective responsibilities.
+2. Recognise that democratic decisions require discussion, reasoning, listening, and compromise.
+3. Understand that majority opinion matters, but decisions also require responsible review.
+4. Express disagreement respectfully and support arguments with reasons.
+5. Recognise that rules can be questioned and amended through fair processes.
+6. Understand the difference between informal opinions and formal democratic decisions.
+
+This is a learning-by-participation experience.
+
+Do not design it as a conventional quiz application, static information website, or AI chatbot. Its primary purpose is to facilitate meaningful collaboration and democratic participation.
+
+---
+
+# 2. TARGET USERS AND DESIGN CONSTRAINTS
+
+The primary learners are students in Classes 6–8 attending a rural government school.
+
+Assume the following learner context:
+
+- Age group: approximately 11–14 years.
+- Device: Android smartphone, often shared with a parent.
+- Available usage time: approximately 30 minutes in the evening.
+- Internet access: potentially limited or inconsistent.
+- Language: Marathi as the primary learning language.
+- Digital literacy: basic smartphone usage.
+
+## 2.1 Language requirements
+
+The application must be Marathi-first.
+
+Requirements:
+- All learner-facing text should initially appear in Marathi.
+- Buttons, navigation, instructions, notifications, validation messages, feedback, and status labels should be in Marathi.
+- Use simple, age-appropriate Marathi.
+- Avoid unnecessarily formal or complicated vocabulary.
+- Include an optional English language toggle.
+- Changing the language should update the interface without changing stored constitutional content.
+
+Create a centralised translation structure so Marathi and English text can be maintained consistently.
+
+Do not use English as the default learner interface language.
+
+## 2.2 Accessibility and usability
+
+Design for:
+- Mobile-first Android usage.
+- Small screens.
+- Touch-friendly buttons.
+- Readable typography.
+- Clear navigation.
+- Minimal unnecessary text.
+- Low-bandwidth usage.
+- Short, focused interactions.
+
+Use a clean interface that middle-school students can understand without extensive instructions.
+
+---
+
+# 3. TECHNOLOGY STACK
+
+Use the following stack:
+
+**Frontend**
+- Next.js with App Router.
+- TypeScript.
+- Tailwind CSS.
+- Responsive components.
+
+**Backend and database**
+- Supabase PostgreSQL.
+- Supabase Authentication.
+- Supabase JavaScript client.
+- Supabase SSR integration using @supabase/ssr.
+
+**Authentication**
+- Google OAuth through Supabase Auth.
+
+**Hosting**
+- Vercel.
+
+**Version control**
+- GitHub.
+
+Do not introduce unnecessary services or technologies.
+
+Do not use Firebase, MongoDB, Flask, a separate Express server, ChromaDB, or external AI APIs for the core application.
+
+Use the simplest maintainable implementation that satisfies the requirements.
+
+---
+
+# 4. USER ROLES
+
+There are two primary user roles.
+
+## 4.1 Student
+
+Students can:
+
+- Sign in using Google.
+- Enrol in a classroom using a classroom code and roll number.
+- View their classroom constitution.
+- Browse rights, duties, and articles.
+- Create proposals.
+- Provide a rationale for their proposals.
+- Like or dislike proposals.
+- Comment and reply to discussions.
+- Participate in formal voting.
+- Propose amendments.
+- Raise Classroom Interest Litigation concerns.
+- View proposal status and teacher decisions.
+- View previous versions of constitutional provisions.
+
+Students must not:
+- Approve their own proposals as teacher.
+- Change the teacher's decisions.
+- Modify an approved constitutional provision directly.
+- Vote multiple times on the same proposal in the same voting round.
+
+## 4.2 Teacher
+
+Teachers can:
+
+- Sign in using Google.
+- Create classrooms.
+- Set classroom names and classroom codes.
+- Set a deadline for constitution drafting.
+- View enrolled students.
+- View student proposals.
+- Open and close formal voting.
+- Review voting results.
+- Approve proposals.
+- Reject proposals with reasons.
+- Request reconsideration.
+- Veto proposals with an explanation.
+- Manage the active classroom constitution.
+- View previous constitutional versions.
+
+Teacher permissions must be checked securely on the server/database side, not merely hidden in the frontend.
+
+---
+
+# 5. AUTHENTICATION AND CLASSROOM ENROLMENT
+
+## 5.1 Google login
+
+Create a login screen with:
+
+- Application logo/name.
+- A short description in Marathi.
+- Sign in with Google button.
+- Language toggle.
+- Clear error and loading states.
+
+Use Supabase Google OAuth.
+
+After successful authentication:
+- Check whether the user has a profile.
+- Check their role.
+- If they are a student without classroom membership, take them to enrolment.
+- If they are an enrolled student, open the student dashboard.
+- If they are a teacher, open the teacher dashboard.
+
+Do not create a fake Google login flow.
+
+If Supabase credentials or Google OAuth configuration are missing, display a clear setup message rather than pretending authentication succeeded.
+
+## 5.2 Student enrolment
+
+Students must join a classroom using:
+
+1. Classroom code.
+2. Roll number.
+
+Example:
+- Classroom code: ET01
+- Roll number: ET01001
+
+Enrolment requirements:
+- Verify that the classroom code exists.
+- Verify that the roll number is authorised for that classroom.
+- Associate the authenticated Google account with that roll number.
+- Prevent duplicate enrolment.
+- Prevent one roll number from being claimed by multiple accounts.
+- Prevent one account from enrolling multiple times in the same classroom.
+
+A roll number is not a password. Do not treat it as a substitute for authentication.
+
+For the MVP, provide a simple teacher-managed mechanism to authorise or register student roll numbers. Do not allow arbitrary unauthorised roll numbers to claim classroom membership.
+
+Students should be able to access their classroom from any device by signing in with the same Google account.
+
+---
+
+# 6. APPLICATION STRUCTURE AND MAIN DASHBOARD
+
+After login and enrolment, display the student dashboard.
+
+The dashboard must have five main sections:
+
+1. **Rights – हक्क**
+2. **Duties – कर्तव्ये**
+3. **Articles – कलमे**
+4. **CIL – वर्गहित याचिका**
+5. **Amendments – घटनादुरुस्ती**
+
+These should be accessible through a simple mobile navigation interface.
+
+Also show:
+
+- Classroom name.
+- Classroom code.
+- Student name.
+- Student roll number.
+- Constitution status.
+- Drafting deadline, if applicable.
+- Number of accepted rights.
+- Number of accepted duties.
+- Number of accepted articles.
+- Pending proposals.
+- Recently updated constitutional provisions.
+
+Include three prominent action buttons:
+
+- Draft Constitution – घटना मसुदा तयार करा
+- Propose Amendment – घटनादुरुस्ती सुचवा
+- Raise CIL – वर्गहित याचिका दाखल करा
+
+The dashboard must clearly distinguish between accepted constitutional provisions and proposals that are still under discussion or review.
+
+---
+
+# 7. CONSTITUTION-BUILDING WORKFLOW
+
+## 7.1 Classroom creation
+
+Teachers create a classroom by providing:
+
+- Classroom name.
+- Unique classroom code.
+- Constitution drafting deadline.
+- Optional classroom description.
+
+Example classroom:
+- Name: Class 7A
+- Code: ET01
+- Deadline: 30 November 2026
+
+The teacher should be able to view and manage the classroom.
+
+## 7.2 Initial constitution drafting
+
+Before the initial constitution is approved, students can propose:
+
+- Rights.
+- Duties.
+- Articles.
+
+The proposal form must include:
+
+- Category.
+- Proposal title.
+- Proposed content.
+- Rationale: Why should this be included in the classroom constitution?
+
+The form should provide simple Marathi guidance.
+
+Example:
+- Title: सर्वांना समान संधी
+- Content: प्रत्येक विद्यार्थ्याला वर्गातील उपक्रमांमध्ये सहभागी होण्याची समान संधी मिळावी.
+- Rationale: प्रत्येक विद्यार्थ्याला स्वतःचे कौशल्य दाखवता यावे.
+
+Students must be able to view existing proposals and avoid unnecessary duplicate submissions.
+
+The teacher can close the initial drafting period after the deadline or manually.
+
+The deadline should be visible to students.
+
+## 7.3 Proposal discussion
+
+Every proposal must have a dedicated detail page.
+
+Display:
+- Proposal title.
+- Category.
+- Author.
+- Proposed content.
+- Rationale.
+- Current status.
+- Like count.
+- Dislike count.
+- Discussion section.
+- Formal voting information, when applicable.
+
+Students can:
+- Like.
+- Dislike.
+- Remove or change their previous informal reaction.
+- Add comments.
+- Reply to comments.
+
+Only authenticated, enrolled students and the relevant teacher should access classroom discussions.
+
+Keep discussion simple and readable on mobile.
+
+## 7.4 Formal voting
+
+Formal voting must be separate from likes and dislikes.
+
+Voting requirements:
+- Teacher opens formal voting.
+- Only enrolled students can vote.
+- Each student gets one formal vote per proposal per voting round.
+- Students can choose Approve or Reject.
+- Students can see voting status and final results.
+- Students cannot vote after voting is closed.
+
+Calculate the majority using formal votes only.
+
+Use this rule:
+
+A proposal passes when:
+
+Approve votes > Reject votes.
+
+Examples:
+- 12 approve and 8 reject: passes.
+- 10 approve and 10 reject: no majority.
+- 7 approve and 13 reject: fails.
+
+A proposal that passes majority voting moves to teacher review.
+
+A proposal that does not receive majority support should be marked as not passed and should not automatically enter teacher approval.
+
+Show the number of votes and outcome clearly.
+
+## 7.5 Teacher decision workflow
+
+After a proposal receives majority support, the teacher can choose:
+
+**Approve**
+- The proposal becomes part of the active constitution.
+- Create a constitutional provision.
+- Update the constitution dashboard.
+- Record the approval and timestamp.
+
+**Reject**
+- The proposal is rejected.
+- The teacher must provide a reason.
+- Students can see the decision and explanation.
+
+**Reconsider**
+- Return the proposal to discussion or revision.
+- Provide a reason for reconsideration.
+- Allow the student to revise the proposal if appropriate.
+
+**Veto**
+- Block the proposal.
+- Require a written justification.
+- Record the decision.
+
+Display the teacher's decision and explanation on the proposal detail page.
+
+Only approved provisions should appear as active constitutional content.
+
+---
+
+# 8. RIGHTS, DUTIES, AND ARTICLES PAGES
+
+Create separate pages for all three constitutional categories.
+
+Each page should display:
+- Accepted constitutional provisions.
+- Provision title.
+- Full provision text.
+- Article/provision number, where applicable.
+- Version number.
+- Approval date.
+- Relevant author or proposer information, if appropriate.
+
+Provide a clear button to suggest a new provision when drafting is open.
+
+Do not mix pending proposals with accepted provisions.
+
+Pending proposals should be available in a separate area labelled as proposals under discussion or review.
+
+The pages should update when the teacher approves a proposal.
+
+---
+
+# 9. AMENDMENTS MODULE
+
+Create a separate Amendments section.
+
+Students should be able to:
+
+1. Browse existing constitutional provisions.
+2. Select a provision to amend.
+3. View the current wording.
+4. Enter the proposed revised wording.
+5. Explain the reason for the amendment.
+6. Submit the amendment.
+
+An amendment must be associated with the existing constitutional item.
+
+Use the same discussion, informal reaction, formal voting, and teacher decision workflow as other proposals.
+
+When an amendment is approved:
+- Update the active provision.
+- Increase its version number.
+- Preserve the old version.
+- Record the amendment proposal and teacher decision.
+- Make the updated version visible on the constitution page.
+
+Provide a version history view.
+
+Example:
+
+Version 1:
+Every student must participate in all classroom activities.
+
+Version 2:
+Every student should receive an equal opportunity to participate in classroom activities, while respecting individual circumstances.
+
+The old version must remain accessible as historical information.
+
+---
+
+# 10. CLASSROOM INTEREST LITIGATION (CIL)
+
+Create a separate CIL section.
+
+Students should be able to raise concerns about an existing classroom rule or practice.
+
+The CIL submission form should include:
+
+- Title of concern.
+- Existing rule or practice being challenged, if applicable.
+- Description of the issue.
+- Reason for challenging it.
+- Suggested change or solution.
+
+CIL cases should support:
+- Discussion.
+- Likes and dislikes.
+- Formal voting.
+- Teacher review.
+- Teacher approval, rejection, reconsideration, or veto.
+- A visible status.
+
+CIL must remain distinct from an ordinary proposal.
+
+It is a mechanism for questioning existing rules and practices, not simply another way to add a new right or duty.
+
+---
+
+# 11. DATABASE DESIGN
+
+Use Supabase PostgreSQL.
+
+Create SQL migration files for the database schema.
+
+Use UUID primary keys, appropriate foreign keys, timestamps, and database constraints.
+
+Start with the following tables.
+
+## 11.1 profiles
+
+Fields:
+- id: UUID, references auth.users.
+- full_name.
+- email.
+- role: student or teacher.
+- language: mr or en.
+- created_at.
+
+## 11.2 classrooms
+
+Fields:
+- id.
+- classroom_code: unique.
+- name.
+- description.
+- teacher_id: references profiles.
+- deadline.
+- status: drafting, active, closed.
+- created_at.
+
+## 11.3 authorised_roll_numbers
+
+Fields:
+- id.
+- classroom_id.
+- roll_number.
+- claimed_by: nullable student profile ID.
+- created_at.
+
+Ensure that the same roll number cannot be claimed more than once in the same classroom.
+
+## 11.4 enrollments
+
+Fields:
+- id.
+- classroom_id.
+- student_id.
+- roll_number.
+- status.
+- created_at.
+
+Constraints:
+- Unique classroom_id + student_id.
+- Unique classroom_id + roll_number.
+
+## 11.5 constitutional_items
+
+Fields:
+- id.
+- classroom_id.
+- category: right, duty, article.
+- title.
+- content.
+- version.
+- status: active, archived.
+- original_proposal_id.
+- created_at.
+- updated_at.
+
+## 11.6 constitutional_item_versions
+
+Fields:
+- id.
+- constitutional_item_id.
+- version_number.
+- title.
+- content.
+- amendment_proposal_id.
+- approved_by.
+- created_at.
+
+This table must preserve previous versions whenever a constitutional provision is amended.
+
+## 11.7 proposals
+
+Fields:
+- id.
+- classroom_id.
+- author_id.
+- type: right, duty, article, amendment, cil.
+- target_item_id: nullable, for amendments or CIL challenges where relevant.
+- title.
+- proposed_content.
+- current_content: nullable, for amendment reference.
+- rationale.
+- status.
+- teacher_reason.
+- teacher_decision.
+- created_at.
+- updated_at.
+
+Suggested statuses:
+- discussion.
+- voting.
+- pending_teacher_review.
+- approved.
+- rejected.
+- reconsideration.
+- vetoed.
+- not_passed.
+
+## 11.8 reactions
+
+Fields:
+- id.
+- proposal_id.
+- student_id.
+- reaction_type: like or dislike.
+- created_at.
+
+Constraint:
+- One current reaction per student per proposal.
+- A student may change or remove their reaction.
+
+## 11.9 votes
+
+Fields:
+- id.
+- proposal_id.
+- student_id.
+- vote_type: formal.
+- choice: approve or reject.
+- voting_round.
+- created_at.
+
+Constraint:
+- Only one formal vote per student per proposal per voting round.
+
+## 11.10 comments
+
+Fields:
+- id.
+- proposal_id.
+- author_id.
+- content.
+- parent_id: nullable, for replies.
+- created_at.
+- updated_at.
+
+## 11.11 participation_logs
+
+Fields:
+- id.
+- classroom_id.
+- student_id.
+- activity_type.
+- related_proposal_id.
+- created_at.
+
+Use this table for a simple participation history, such as proposals created, comments added, and votes cast.
+
+Do not collect unnecessary personal information.
+
+---
+
+# 12. SECURITY AND DATABASE POLICIES
+
+Use Supabase Row Level Security (RLS).
+
+Implement policies so that:
+
+- Users can access their own profiles.
+- Enrolled students can access their classroom content.
+- Students can create proposals only in classrooms where they are enrolled.
+- Students can react and comment only on proposals they can access.
+- Only enrolled students can cast formal votes.
+- Students cannot cast multiple votes in the same round.
+- Students cannot change teacher decisions.
+- Only the assigned classroom teacher can manage their classroom.
+- Only authorised teachers can open or close voting and make teacher decisions.
+- Approved constitutional content can only be modified through the authorised teacher approval workflow.
+
+Do not rely only on frontend role checks.
+
+Use server-side validation and secure database functions where needed for sensitive operations.
+
+Never expose a Supabase service role key in frontend code.
+
+Use environment variables:
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+
+Create a `.env.example` file containing placeholder values only.
+
+Never commit real credentials or secrets.
+
+---
+
+# 13. APPLICATION SCREENS
+
+Build the following connected screens.
+
+## Screen 1: Landing page
+
+- Application name and identity.
+- Short Marathi introduction.
+- Explanation of the classroom constitution concept.
+- Sign in with Google button.
+- Language toggle.
+
+## Screen 2: Authentication
+
+- Google OAuth sign-in.
+- Loading state.
+- Authentication error state.
+
+## Screen 3: Student enrolment
+
+- Classroom code input.
+- Roll number input.
+- Submit button.
+- Validation messages in Marathi.
+- Success state.
+
+## Screen 4: Student dashboard
+
+- Classroom details.
+- Student details.
+- Five main sections.
+- Constitution summary.
+- Pending proposal summary.
+- Main action buttons.
+
+## Screen 5: Rights
+
+- Accepted rights.
+- New proposal action.
+- Pending proposals link.
+
+## Screen 6: Duties
+
+- Accepted duties.
+- New proposal action.
+- Pending proposals link.
+
+## Screen 7: Articles
+
+- Accepted articles.
+- New proposal action.
+- Pending proposals link.
+
+## Screen 8: Proposal creation
+
+- Category selection.
+- Title.
+- Content.
+- Rationale.
+- Submit button.
+
+## Screen 9: Proposal detail and discussion
+
+- Proposal content.
+- Rationale.
+- Likes and dislikes.
+- Comment thread.
+- Reply feature.
+- Voting information.
+- Status and teacher decision.
+
+## Screen 10: Amendments
+
+- Existing constitutional items.
+- Select provision.
+- Current wording.
+- Proposed wording.
+- Rationale.
+- Submit amendment.
+
+## Screen 11: CIL
+
+- List of CIL cases.
+- Create CIL submission.
+- Case details and status.
+
+## Screen 12: Teacher dashboard
+
+- Classroom overview.
+- Student enrolments.
+- Drafting deadline.
+- Proposal management.
+- Voting management.
+- Pending teacher decisions.
+
+## Screen 13: Teacher proposal review
+
+- Full proposal details.
+- Discussion.
+- Voting results.
+- Approve.
+- Reject.
+- Reconsider.
+- Veto.
+- Mandatory decision explanation where applicable.
+
+## Screen 14: Constitution and version history
+
+- Active constitution.
+- Rights, duties, and articles.
+- Version history.
+- Previous wording.
+- Amendment records.
+
+## Screen 15: About page
+
+- Application purpose.
+- How the classroom constitution works.
+- Simple explanation of rights, duties, articles, amendments, and CIL.
+- Identity and project information.
+
+You may combine closely related screens if doing so improves usability, but all core workflows must remain accessible.
+
+---
+
+# 14. UI/UX DESIGN DIRECTION
+
+Design a clean, modern, friendly educational application.
+
+The visual identity should communicate:
+- Democracy.
+- Participation.
+- Equality.
+- Collaboration.
+- Trust.
+- Constitutional values.
+
+Suggested design direction:
+- Warm, light background.
+- Deep blue or indigo as the primary colour.
+- Muted saffron or orange as an accent.
+- Green for approved states.
+- Red for rejected or vetoed states.
+- Rounded cards.
+- Clear typography.
+- Simple icons.
+- Generous spacing.
+- Readable Marathi typography.
+
+Use an appropriate Devanagari-compatible font.
+
+Use responsive layouts for Android phones, tablets, and desktop browsers.
+
+On mobile:
+- Use a compact navigation bar or mobile menu.
+- Keep buttons large enough for touch interaction.
+- Avoid wide tables.
+- Use cards instead of dense layouts.
+- Keep forms short and clear.
+
+Display proposal statuses with understandable Marathi labels.
+
+Examples:
+- चर्चेसाठी खुले
+- मतदान सुरू
+- शिक्षकांच्या मंजुरीसाठी प्रलंबित
+- मंजूर
+- नामंजूर
+- पुनर्विचार आवश्यक
+- व्हेटो केलेले
+
+The interface should not feel like an administrative government portal. It should feel welcoming to middle-school students.
+
+---
+
+# 15. EDUCATIONAL CONTENT AND FEEDBACK
+
+The app should support meaningful learning, not just data entry.
+
+Include short contextual guidance in Marathi.
+
+For example, when creating a right:
+"हा हक्क वर्गातील प्रत्येक विद्यार्थ्याला समान संधी देतो का?"
+
+When creating a duty:
+"या जबाबदारीमुळे वर्गातील इतर विद्यार्थ्यांना कशी मदत होईल?"
+
+When creating an article:
+"हा नियम वर्गातील कोणती समस्या सोडवण्यास मदत करेल?"
+
+Include educational feedback addressing two common misconceptions.
+
+**Misconception 1: A right means a student can do anything without restrictions.**
+
+Feedback:
+"हक्क महत्त्वाचे आहेत; पण आपल्या कृतींमुळे इतरांच्या हक्कांना किंवा सुरक्षिततेला बाधा येऊ नये. प्रत्येकाचा हक्क जपताना इतरांचा विचार करणेही आवश्यक आहे."
+
+**Misconception 2: Duties are only the responsibility of teachers.**
+
+Feedback:
+"वर्ग चांगला चालण्यासाठी शिक्षकांसोबत विद्यार्थ्यांचीही जबाबदारी असते. इतरांचा आदर करणे, स्वच्छता राखणे आणि सर्वांना सहभागी होण्याची संधी देणे ही विद्यार्थ्यांचीही कर्तव्ये आहेत."
+
+Use these as contextual learning messages rather than interrupting every interaction.
+
+Encourage students to provide reasons, listen to others, and revise proposals where appropriate.
+
+For the MVP, deterministic feedback is sufficient. Do not claim that an AI model is being used unless a real model integration is implemented.
+
+---
+
+# 16. COLLABORATION AND PARTICIPATION
+
+The application must support meaningful collaboration.
+
+Implement:
+- Student proposals.
+- Peer reactions.
+- Discussion and replies.
+- Formal voting.
+- Proposal revision after reconsideration.
+- Teacher decisions.
+
+Show simple participation indicators, such as:
+- Number of students who contributed.
+- Number of proposals.
+- Number of comments.
+- Number of formal votes.
+
+Do not turn participation into a competitive leaderboard.
+
+Do not reward students merely for producing the highest number of comments or reactions.
+
+Encourage balanced participation and respectful disagreement.
+
+For the MVP, simple participation counts and activity history are enough. Advanced analytics are not required.
+
+---
+
+# 17. FUNCTIONAL REQUIREMENTS AND ACCEPTANCE CRITERIA
+
+The application is considered functional only when the following scenarios work.
+
+**Scenario A: Student enrolment**
+1. A student signs in using Google.
+2. The student enters a valid classroom code and authorised roll number.
+3. The student is enrolled.
+4. The student reaches the correct classroom dashboard.
+
+**Scenario B: Creating a proposal**
+1. A student opens Rights.
+2. The student creates a new right.
+3. The student enters a title, content, and rationale.
+4. The proposal appears in the proposal list.
+
+**Scenario C: Peer discussion**
+1. Another enrolled student opens the proposal.
+2. The student likes or dislikes it.
+3. The student adds a comment.
+4. The author can see the discussion.
+
+**Scenario D: Formal voting**
+1. The teacher opens voting.
+2. Enrolled students cast approve or reject votes.
+3. The system calculates the result.
+4. The proposal passes or fails according to the majority rule.
+5. Likes and dislikes do not affect the formal result.
+
+**Scenario E: Teacher approval**
+1. A proposal passes voting.
+2. It appears in the teacher review dashboard.
+3. The teacher approves it.
+4. The provision appears in the active constitution.
+
+**Scenario F: Teacher rejection**
+1. A proposal reaches teacher review.
+2. The teacher rejects it with a reason.
+3. The proposal displays the rejection and reason.
+4. The rejected proposal does not appear in the active constitution.
+
+**Scenario G: Amendment**
+1. A student selects an existing constitutional provision.
+2. The student proposes revised wording and provides a rationale.
+3. The proposal goes through discussion, voting, and teacher review.
+4. If approved, the active provision is updated.
+5. The previous version remains accessible.
+
+**Scenario H: CIL**
+1. A student raises a concern about an existing rule.
+2. Other students discuss it.
+3. Students vote.
+4. The teacher reviews and decides.
+5. The decision and its explanation remain visible.
+
+**Scenario I: Access control**
+1. An unauthorised user cannot access a classroom's private content.
+2. A student cannot perform teacher-only actions.
+3. A student cannot vote more than once in the same voting round.
+4. A student cannot directly modify approved constitutional provisions.
+
+---
+
+# 18. DEVELOPMENT APPROACH
+
+Build the application in small, working stages.
+
+Do not attempt to generate an unnecessarily complicated application in one step.
+
+Follow this order:
+
+**Stage 1: Foundation**
+- Create the Next.js project structure.
+- Configure TypeScript and Tailwind CSS.
+- Build the landing page.
+- Build the Marathi-first navigation and responsive layout.
+- Create reusable components.
+
+**Stage 2: Supabase**
+- Create the Supabase client and server utilities.
+- Provide SQL migrations.
+- Create the database schema.
+- Configure Row Level Security.
+- Add `.env.example`.
+- Document required Supabase configuration.
+
+**Stage 3: Authentication and enrolment**
+- Implement Google OAuth.
+- Implement profile creation.
+- Implement role-based routing.
+- Implement classroom creation and student enrolment.
+
+**Stage 4: Constitution**
+- Implement dashboard.
+- Implement Rights, Duties, and Articles.
+- Implement proposal creation and display.
+
+**Stage 5: Collaboration**
+- Implement likes and dislikes.
+- Implement comments and replies.
+- Implement formal voting.
+- Implement majority calculation.
+
+**Stage 6: Teacher workflow**
+- Implement teacher dashboard.
+- Implement voting controls.
+- Implement approval, rejection, reconsideration, and veto.
+
+**Stage 7: Amendments and CIL**
+- Implement amendment proposals.
+- Implement constitutional version history.
+- Implement CIL submission and review.
+
+**Stage 8: Testing and deployment**
+- Test all core workflows.
+- Fix TypeScript and runtime errors.
+- Verify mobile responsiveness.
+- Verify RLS and permissions.
+- Prepare deployment configuration for Vercel.
+
+---
+
+# 19. CODE QUALITY REQUIREMENTS
+
+Use:
+- TypeScript types and interfaces.
+- Reusable components.
+- Clear folder organisation.
+- Centralised translations.
+- Centralised status definitions.
+- Form validation.
+- Loading states.
+- Empty states.
+- Error handling.
+- Success messages.
+- Consistent naming conventions.
+
+Avoid:
+- A single enormous page component.
+- Repeated hardcoded UI.
+- Fake authentication.
+- Fake voting results.
+- Static data pretending to be live database data.
+- Frontend-only permission checks.
+- Exposing secret keys.
+- Unnecessary dependencies.
+
+If a feature is not implemented, label it honestly rather than showing a fake working interface.
+
+Do not silently replace a database operation with local state if the feature is supposed to persist across users.
+
+---
+
+# 20. REQUIRED PROJECT STRUCTURE
+
+Use a structure similar to:
+
+aapli-varg-sabha/
+  public/
+  src/
+    app/
+      layout.tsx
+      page.tsx
+      globals.css
+      login/
+        page.tsx
+      enroll/
+        page.tsx
+      dashboard/
+        page.tsx
+      rights/
+        page.tsx
+      duties/
+        page.tsx
+      articles/
+        page.tsx
+      amendments/
+        page.tsx
+      cil/
+        page.tsx
+      proposal/
+        [id]/
+          page.tsx
+      teacher/
+        page.tsx
+      about/
+        page.tsx
+      auth/
+        callback/
+          route.ts
+    components/
+      Navbar.tsx
+      Footer.tsx
+      ConstitutionCard.tsx
+      ProposalCard.tsx
+      ProposalForm.tsx
+      CommentSection.tsx
+      VotingPanel.tsx
+      TeacherDecisionPanel.tsx
+    lib/
+      supabase/
+        client.ts
+        server.ts
+      auth.ts
+      constants.ts
+      translations.ts
+    types/
+      database.ts
+  supabase/
+    migrations/
+      001_initial_schema.sql
+  DESIGN.md
+  README.md
+  .env.example
+  package.json
+
+You may adjust the structure to follow the conventions of the installed Next.js version.
+
+---
+
+# 21. DOCUMENTATION
+
+Create a useful README.md containing:
+
+- Project overview.
+- Technology stack.
+- Prerequisites.
+- Installation instructions.
+- Local development instructions.
+- Supabase setup.
+- Google OAuth configuration.
+- Environment variables.
+- Database migration instructions.
+- Vercel deployment instructions.
+- Known limitations.
+
+Create DESIGN.md containing:
+
+- Educational purpose.
+- Target learner context.
+- User roles.
+- Application architecture.
+- Main workflows.
+- Database design.
+- Design decisions.
+- Current implementation limitations.
+
+Clearly identify any feature that is planned but not implemented.
+
+---
+
+# 22. IMPORTANT SCOPE LIMITATIONS
+
+This is an MVP intended to demonstrate the complete central idea with a small working application.
+
+Prioritise the following features:
+
+1. Google login.
+2. Classroom creation and student enrolment using classroom code and roll number.
+3. Five main sections: Rights, Duties, Articles, CIL, and Amendments.
+4. Proposal creation with rationale.
+5. Likes, dislikes, comments, and replies.
+6. Separate formal majority voting.
+7. Teacher approval, rejection, reconsideration, and veto.
+8. Accepted constitution display.
+9. Amendment version history.
+10. Marathi-first interface.
+
+Do not add:
+- AI chatbot.
+- AI-generated constitutional rules.
+- ChromaDB or vector databases.
+- Complex gamification.
+- Leaderboards.
+- Payment systems.
+- Unnecessary analytics dashboards.
+- Unnecessary third-party APIs.
+- Complex real-time features unless they are essential.
+
+A simple refresh-based or manually refreshed data interface is acceptable for the MVP. Supabase Realtime is optional.
+
+Keep the application easy to understand, easy to demonstrate, and easy to modify.
+
+---
+
+# 23. IMPLEMENTATION INSTRUCTIONS FOR GOOGLE AI STUDIO
+
+Before writing code:
+
+1. Understand the full application context and workflows.
+2. Identify the core entities and their relationships.
+3. Plan the database schema and permissions.
+4. Plan the screens and navigation.
+5. Identify the dependencies between features.
+
+Then begin implementation.
+
+Do not stop after producing a design description or pseudocode.
+
+Generate the actual application code and all required project files.
+
+If the application is too large to generate reliably in one pass, implement it incrementally while keeping the architecture consistent. Do not remove core requirements to make generation easier.
+
+After implementation:
+
+1. Show the project folder structure.
+2. Explain how to install dependencies.
+3. Explain how to configure Supabase.
+4. Explain how to configure Google OAuth.
+5. Provide the SQL migration and instructions to execute it.
+6. Explain how to run the application locally.
+7. Explain how to deploy it on Vercel.
+8. List any remaining limitations honestly.
+
+Do not invent Supabase credentials, Google OAuth credentials, or deployment URLs. Use placeholders and explain where real credentials must be configured.
+
+---
+
+# FINAL PRODUCT EXPECTATION
+
+The final product should demonstrate a functioning student-led classroom constitution process.
+
+A student should be able to sign in, join a classroom, propose a right or duty, explain the reasoning, receive peer feedback, participate in formal voting, and see the proposal move to teacher review.
+
+The teacher should be able to review the proposal and make a decision. If approved, the provision should become part of the classroom constitution.
+
+Students should also be able to challenge existing practices through CIL and propose amendments to existing constitutional provisions while preserving historical versions.
+
+The application should make the underlying educational idea immediately understandable to a middle-school student.
+
+**Build a functional application, not just a visual mockup.**

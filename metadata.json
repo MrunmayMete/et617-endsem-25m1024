@@ -1,0 +1,8 @@
+{
+  "name": "Aapli Varg Sabha (आपली वर्ग सभा)",
+  "description": "A Marathi-first collaborative educational platform where middle-school students draft, discuss, vote on, and amend their own classroom constitution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
